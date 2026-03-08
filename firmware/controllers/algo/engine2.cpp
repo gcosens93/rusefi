@@ -200,7 +200,7 @@ void EngineState::periodicFastCallback() {
 
 	auto ltftResult = engine->module<LongTermFuelTrim>()->getTrims(rpm, fuelLoad);
 
-	/* New Injector Staging Method - Now we use the staging fraction table as a duty limit table. */
+	// New Injector Staging Method - Now we use the staging fraction table as a duty limit table. 
 	injectionStage2Fraction = getStage2InjectionFraction(rpm, engine->fuelComputer.afrTableYAxis);
 	
 	// If duty cycle will be greater than the limit, use the secondaries 
