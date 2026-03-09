@@ -200,9 +200,20 @@ void EngineState::periodicFastCallback() {
 
 	auto ltftResult = engine->module<LongTermFuelTrim>()->getTrims(rpm, fuelLoad);
 
+	// New Injector Staging Method - Now we use the staging fraction table as a duty limit table. 
 	injectionStage2Fraction = getStage2InjectionFraction(rpm, engine->fuelComputer.afrTableYAxis);
-	float stage2InjectionMass = untrimmedInjectionMass * injectionStage2Fraction;
-	float stage1InjectionMass = untrimmedInjectionMass - stage2InjectionMass;
+
+	// If duty cycle will be greater than the limit, use the secondaries 
+	if(engine->module<InjectorModelPrimary>()->getInjectionDuration(untrimmedInjectionMass) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm) > injectionStage2Fraction ) 
+	{
+		float stage2InjectionMass = untrimmedInjectionMass;
+		float stage1InjectionMass = 0;
+	}
+	else // Duty cycle is below the limit so use primaries
+	{
+		float stage2InjectionMass = 0;
+		float stage1InjectionMass = untrimmedInjectionMass;
+	}
 
 	// Store the pre-wall wetting injection duration for scheduling purposes only, not the actual injection duration
 	engine->engineState.injectionDuration = engine->module<InjectorModelPrimary>()->getInjectionDuration(stage1InjectionMass);
