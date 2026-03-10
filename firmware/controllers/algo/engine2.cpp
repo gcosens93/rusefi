@@ -207,8 +207,7 @@ void EngineState::periodicFastCallback() {
 
   
 	// If duty cycle will be greater than the limit, use the secondaries 
-	if(injectionStage2Fraction)
-    // engine->module<InjectorModelPrimary>()->getInjectionDuration(untrimmedInjectionMass) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm) > injectionStage2Fraction ) 
+	if((engine->module<InjectorModelPrimary>()->getInjectionDuration(untrimmedInjectionMass) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm)) > injectionStage2Fraction ) 
 	{
 		stage2InjectionMass = untrimmedInjectionMass;
 		stage1InjectionMass = 0;
