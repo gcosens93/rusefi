@@ -204,7 +204,8 @@ void EngineState::periodicFastCallback() {
 	injectionStage2Fraction = getStage2InjectionFraction(rpm, engine->fuelComputer.afrTableYAxis);
 
 	// If duty cycle will be greater than the limit, use the secondaries 
-	if(engine->module<InjectorModelPrimary>()->getInjectionDuration(untrimmedInjectionMass) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm) > injectionStage2Fraction ) 
+	if(injectionStage2Fraction)
+    // engine->module<InjectorModelPrimary>()->getInjectionDuration(untrimmedInjectionMass) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm) > injectionStage2Fraction ) 
 	{
 		float stage2InjectionMass = untrimmedInjectionMass;
 		float stage1InjectionMass = 0;
