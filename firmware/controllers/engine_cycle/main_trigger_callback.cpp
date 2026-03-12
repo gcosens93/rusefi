@@ -99,10 +99,10 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
 	float injectionMassStage1 = injectionMassGrams;
   
   // If duty cycle will be greater than the limit, use the secondaries 
-  if((engine->module<InjectorModelPrimary>()->getInjectionDuration(injectionMassGrams) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm)) > stage2Fraction) 
+  if((engine->module<InjectorModelPrimary>()->getInjectionDuration(injectionMassGrams) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(engine->rpmCalculator.getCachedRpm())) > stage2Fraction) 
 	{
     injectionMassStage2 = injectionMassGrams;
-    injectionMassStage1 = 0;
+    injectionMassStage1 = 0.050f; // If set to <0.05ms the scheduler errors out. This PW will give 0 fuel anyway so we can call this ok
   }
   else
   {
