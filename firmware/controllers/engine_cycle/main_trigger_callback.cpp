@@ -94,9 +94,21 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
 	// Disable staging in simultaneous mode
 	float stage2Fraction = isSimultaneous ? 0 : getEngineState()->injectionStage2Fraction;
 
-	// Compute fraction of fuel on stage 2, remainder goes on stage 1
-	const float injectionMassStage2 = stage2Fraction * injectionMassGrams;
-	float injectionMassStage1 = injectionMassGrams - injectionMassStage2;
+	// Initialise stage 1 & 2 variables
+	float injectionMassStage2 = 0;
+	float injectionMassStage1 = injectionMassGrams;
+  
+  // If duty cycle will be greater than the limit, use the secondaries 
+  if((engine->module<InjectorModelPrimary>()->getInjectionDuration(injectionMassGrams) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(rpm)) > stage2Fraction) 
+	{
+    injectionMassStage2 = injectionMassGrams;
+    injectionMassStage1 = 0;
+  }
+  else
+  {
+    injectionMassStage2 = 0;
+    injectionMassStage1 = injectionMassGrams;
+  }
 
 #if EFI_VEHICLE_SPEED
 	{
