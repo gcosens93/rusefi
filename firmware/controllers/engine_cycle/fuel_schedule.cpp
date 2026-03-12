@@ -15,14 +15,15 @@ void turnInjectionPinHigh(scheduler_arg_t const arg) {
 	auto const event{ taggedPointer.getOriginalPointer() };
 	auto const hasStage2Injection{ taggedPointer.getFlag() };
 
-	for (auto const& output: event->outputs) {
-		if (output) {
-			output->open(nowNt);
-		}
-	}
-
 	if (hasStage2Injection) {
 		for (auto const& output: event->outputsStage2) {
+			if (output) {
+				output->open(nowNt);
+			}
+		}
+	}
+	else {    
+		for (auto const& output: event->outputs) {
 			if (output) {
 				output->open(nowNt);
 			}

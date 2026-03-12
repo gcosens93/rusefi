@@ -102,7 +102,7 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
   if((engine->module<InjectorModelPrimary>()->getInjectionDuration(injectionMassGrams) * getNumberOfInjections(engineConfiguration->injectionMode) / getEngineCycleDuration(engine->rpmCalculator.getCachedRpm())) > stage2Fraction) 
 	{
     injectionMassStage2 = injectionMassGrams;
-    injectionMassStage1 = 0.050f; // If set to <0.05ms the scheduler errors out. This PW will give 0 fuel anyway so we can call this ok
+    injectionMassStage1 = 0; // If set to <0.05ms the scheduler errors out. This PW will give 0 fuel anyway so we can call this ok
   }
   else
   {
@@ -165,7 +165,7 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
 	// Durations under 50us-ish aren't safe for the scheduler
 	// as their order may be swapped, resulting in a stuck open injector
 	// see https://github.com/rusefi/rusefi/pull/596 for more details
-	if (injectionDurationStage1 < 0.050f)
+	if ((injectionDurationStage1 < 0.050f) && (injectionDurationStage2 < 0.050f))
 	{
 #if EFI_PROD_CODE
 		warning(ObdCode::CUSTOM_OBD_impossibly_short_INJECTION, "Short pulse %.2f", injectionDurationStage1);
@@ -176,8 +176,8 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
 	floatus_t durationUsStage1 = MS2US(injectionDurationStage1);
 	floatus_t durationUsStage2 = MS2US(injectionDurationStage2);
 
-	// Only bother with the second stage if it's long enough to be relevant
-	bool hasStage2Injection = durationUsStage2 > 50;
+	// Only bother with the second stage if it's non zero. Otherwise we must be using the first stage
+	bool hasStage2Injection = durationUsStage2 > 0;
 
 #if EFI_PRINTF_FUEL_DETAILS
 	if (printFuelDebug) {
@@ -207,17 +207,19 @@ void InjectionEvent::onTriggerTooth(efitick_t nowNt, float currentPhase, float n
 		angleFromNow += getEngineState()->engineCycle;
 	}
 
-	// Schedule opening (stage 1 + stage 2 open together)
+	// Schedule opening (stage 1 or stage 2 open depending which is in use)
 	efitick_t startTime = scheduleByAngle(nullptr, nowNt, angleFromNow, startAction);
-
-	// Schedule closing stage 1
-	efitick_t turnOffTimeStage1 = startTime + US2NT((int)durationUsStage1);
-	getScheduler()->schedule("inj", nullptr, turnOffTimeStage1, endActionStage1);
 
 	// Schedule closing stage 2 (if applicable)
 	if (hasStage2Injection && endActionStage2) {
 		efitick_t turnOffTimeStage2 = startTime + US2NT((int)durationUsStage2);
 		getScheduler()->schedule("inj stage 2", nullptr, turnOffTimeStage2, endActionStage2);
+	}
+	else
+	{
+		// Schedule closing stage 1
+		efitick_t turnOffTimeStage1 = startTime + US2NT((int)durationUsStage1);
+		getScheduler()->schedule("inj", nullptr, turnOffTimeStage1, endActionStage1);		
 	}
 
 #if EFI_DETAILED_LOGGING
