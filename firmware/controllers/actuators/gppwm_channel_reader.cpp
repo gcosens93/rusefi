@@ -92,6 +92,8 @@ expected<float> readGppwmChannel(gppwm_channel_e channel) {
 		return Sensor::get(SensorType::FuelPressureInjector);
 	case GPPWM_ThrottleRatio:
 		return getThrottlePressureRatio(Sensor::getOrZero(SensorType::Map));
+	case GPPWM_BoostTarget:
+		return (float) BoostController::getSetpoint();
 	}
 	return unexpected;
 }
