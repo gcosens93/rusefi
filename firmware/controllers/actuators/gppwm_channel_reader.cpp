@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "throttle_model.h"
 #include "gppwm_channel_reader.h"
+#include "boost_control.h"
 
 expected<float> readGppwmChannel(gppwm_channel_e channel) {
 	switch (channel) {
