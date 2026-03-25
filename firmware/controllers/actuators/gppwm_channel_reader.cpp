@@ -5,7 +5,7 @@
 #include "pch.h"
 #include "throttle_model.h"
 #include "gppwm_channel_reader.h"
-#include "boost_control.h"
+// #include "boost_control.h"
 
 expected<float> readGppwmChannel(gppwm_channel_e channel) {
 	switch (channel) {
@@ -94,7 +94,7 @@ expected<float> readGppwmChannel(gppwm_channel_e channel) {
 	case GPPWM_ThrottleRatio:
 		return getThrottlePressureRatio(Sensor::getOrZero(SensorType::Map));
 	case GPPWM_BoostTarget:
-		return (float) BoostController::getSetpoint();
+		return getThrottlePressureRatio(Sensor::getOrZero(SensorType::Map)); //return (float) BoostController::getSetpoint();
 	}
 	return unexpected;
 }
