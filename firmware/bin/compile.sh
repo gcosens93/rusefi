@@ -6,6 +6,9 @@
 #    Compile rusEFI - use '-b' to build a bundle    #
 #####################################################
 
+exec > >(tee -a ~/buildafterclean.log) 2>&1
+set -x
+
 PS3="Select a build by entering its number: "
 
 # This full path of the firmware directory
