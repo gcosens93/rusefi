@@ -50,10 +50,12 @@ float TpsAccelEnrichment::getTpsEnrichment() {
 	if (rpm < engineConfiguration->cranking.rpm) {
 		return 0;
 	}
-
-	if (isAboveAccelThreshold) {
+	
+	if (isAboveAccelThreshold) {		
+		float tpsRate = deltaTps / engineConfiguration->tpsAccelLookback; // Rate of change of TPS (%/s)
+		
 		valueFromTable = interpolate3d(config->tpsTpsAccelTable,
-			config->tpsTpsAccelToRpmBins, tpsTo,
+			config->tpsTpsAccelToRpmBins, tpsRate,
 			config->tpsTpsAccelFromRpmBins, tpsFrom);
 		extraFuel = valueFromTable;
 		m_timeSinceAccel.reset();
