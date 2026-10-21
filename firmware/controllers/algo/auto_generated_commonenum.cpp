@@ -1,6 +1,6 @@
 #include "global.h"
 #include "rusefi_enums.h"
-// was generated automatically by rusEFI tool  from rusefi_enums.h // by enum_to_string.jar tool on Sat Apr 04 11:57:46 UTC 2026
+// was generated automatically by rusEFI tool  from rusefi_enums.h // by enum_to_string.jar tool on Wed Oct 21 21:09:30 BST 2026
 // see also gen_config_and_enums.bat
 
 
@@ -624,6 +624,8 @@ const char *getGppwm_channel_e(gppwm_channel_e value) {
 			return "GPPWM_AuxTemp2";
 		case GPPWM_BaroPressure:
 			return "GPPWM_BaroPressure";
+		case GPPWM_BoostTarget:
+			return "GPPWM_BoostTarget";
 		case GPPWM_Clt:
 			return "GPPWM_Clt";
 		case GPPWM_DetectedGear:

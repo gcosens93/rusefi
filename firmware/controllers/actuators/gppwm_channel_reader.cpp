@@ -93,7 +93,11 @@ expected<float> readGppwmChannel(gppwm_channel_e channel) {
 	case GPPWM_ThrottleRatio:
 		return getThrottlePressureRatio(Sensor::getOrZero(SensorType::Map));
 	case GPPWM_BoostTarget:
+#if EFI_BOOST_CONTROL
 		return engine->module<BoostController>().unmock().getSetpoint();
+#else
+		return unexpected;
+#endif // EFI_BOOST_CONTROL
 	}
 	return unexpected;
 }
